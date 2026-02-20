@@ -1,0 +1,12 @@
+{
+	"apps": [
+		{
+			"name": "TEMPLATE",
+			"namespace": "TEMPLATE",
+			"script": "npm",
+			"args": "run start",
+			"error_file": "./.logs/error.log",
+			"out_file": "./.logs/output.log"
+		}
+	]
+}

@@ -1,0 +1,17 @@
+import {Switch} from '../ui/switch'
+import React from 'react'
+
+import {cn} from '@/lib/utils'
+
+export default function CustomSwitch(props) {
+	const className = props?.className ?? ''
+	return (
+		<Switch
+			className={cn(
+				'data-[state=checked]:bg-blue-600 dark:data-[state=checked]:bg-blue-600',
+				className,
+			)}
+			{...props}
+		/>
+	)
+}

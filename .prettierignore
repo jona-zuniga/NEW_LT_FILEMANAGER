@@ -1,0 +1,7 @@
+# Ignore artifacts:
+.next/
+.logs/
+.vscode/
+.idea/
+public/
+node_modules/

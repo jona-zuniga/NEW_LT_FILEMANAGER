@@ -1,0 +1,110 @@
+{
+	"No data found": {
+		"en": "No data found",
+		"es": "No se encontraron datos"
+	},
+	"mantine_data_table": {
+		"en": "Mantine Data Table",
+		"es": "Tabla de datos Mantine"
+	},
+	"anonymous": {
+		"en": "Anonymous",
+		"es": "Anónimo"
+	},
+	"app_name": {
+		"en": "Template",
+		"es": "Plantilla"
+	},
+	"basic_components": {
+		"en": "Basic components",
+		"es": "Componentes básicos"
+	},
+	"change_lang": {
+		"en": "Change language",
+		"es": "Cambiar idioma"
+	},
+	"content": {
+		"en": "Content",
+		"es": "Contenido"
+	},
+	"error": {
+		"en": "Error",
+		"es": "Error"
+	},
+	"dark_mode": {
+		"en": "Dark mode",
+		"es": "Modo oscuro"
+	},
+	"search": {
+		"en": "Search",
+		"es": "Buscar"
+	},
+	"examples": {
+		"en": "Examples",
+		"es": "Ejemplos"
+	},
+	"home": {
+		"en": "Home",
+		"es": "Inicio"
+	},
+	"invalid_params": {
+		"en": "Invalid parameters",
+		"es": "Parámetros inválidos"
+	},
+	"loading": {
+		"en": "Loading...",
+		"es": "Cargando..."
+	},
+	"login": {
+		"en": "Login",
+		"es": "Iniciar sesión"
+	},
+	"login_success": {
+		"en": "Login success",
+		"es": "Inicio de sesión exitoso"
+	},
+	"logout": {
+		"en": "Logout",
+		"es": "Cerrar sesión"
+	},
+	"logout_success": {
+		"en": "Logout success",
+		"es": "Cierre de sesión exitoso"
+	},
+	"password": {
+		"en": "Password",
+		"es": "Contraseña"
+	},
+	"pick_a_date_range": {
+		"en": "Pick a date range",
+		"es": "Elige un rango de fechas"
+	},
+	"please_sign_in_to_your_account": {
+		"en": "Please sign in to your account",
+		"es": "Por favor inicie sesión en su cuenta"
+	},
+	"select": {
+		"en": "Select",
+		"es": "Selecciona"
+	},
+	"table": {
+		"en": "Table",
+		"es": "Tabla"
+	},
+	"text_editor": {
+		"en": "Text editor",
+		"es": "Editor de texto"
+	},
+	"try_again": {
+		"en": "Try again",
+		"es": "Vuelva a intentar"
+	},
+	"unauthorized": {
+		"en": "Unauthorized",
+		"es": "No autorizado"
+	},
+	"username": {
+		"en": "Username",
+		"es": "Nombre de usuario"
+	}
+}

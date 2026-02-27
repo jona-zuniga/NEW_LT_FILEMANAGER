@@ -4,7 +4,7 @@ import {ERR500, OK200} from '@/constants/responses'
 
 //Querys
 
-//eslint-disable-next-line no-unused-vars
+ 
 const queries = {
 	orace: {
 		get: `SELECT * FROM table WHERE id = :id`,
@@ -246,7 +246,7 @@ let ExampleAnimalsData = [
  * @param {*} params contains the dynamic route parameters
  * @returns
  */
-//eslint-disable-next-line no-unused-vars
+ 
 export async function GET(req, {params}) {
 	try {
 		return Response.json(ExampleAnimalsData, {
@@ -262,7 +262,7 @@ export async function GET(req, {params}) {
  * @param {*} params contains the dynamic route parameters
  * @returns
  */
-//eslint-disable-next-line no-unused-vars
+ 
 export async function POST(req, {params}) {
 	try {
 		const {code, animal, quantity, date, user} = schemaExample.parse(await req.json())

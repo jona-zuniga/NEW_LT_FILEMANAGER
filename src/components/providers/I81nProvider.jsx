@@ -8,7 +8,7 @@ import {translator} from '@/helpers/utils/getI18nLang'
 const i18nContext = createContext({
 	t: (key) => key,
 	lang: langs.en,
-	// eslint-disable-next-line no-unused-vars
+	 
 	changeLang: (lang) => undefined,
 })
 

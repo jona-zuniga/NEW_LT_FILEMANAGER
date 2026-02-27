@@ -1,11 +1,15 @@
 import Icons from '@/components/utils/Icons'
+import { useUser } from '../providers/UserProvider'
 
 const getPathWithLang = (path, lang) => `/${lang}${path}`
 
-export const getRoutes = (lang, key) => {
+export const getRoutes = (lang, key, acl) => {
+
 	if (key === 'web') {
 		return [
-			{
+			
+			//acl?.['FileStorage'] &&
+			 {
 				groupLabel: '',
 				menus: [
 					{
@@ -14,58 +18,27 @@ export const getRoutes = (lang, key) => {
 						icon: Icons.Misc.Home,
 						submenus: [],
 					},
-				],
+				].filter(Boolean),
 			},
 			{
-				groupLabel: 'content',
+				groupLabel: 'Uploads',
+				icon: Icons.Misc.Home,
 				menus: [
 					{
-						href: '',
-						label: 'examples',
-						icon: Icons.Misc.User,
-						submenus: [
-							{
-								href: getPathWithLang('/web/basic-components', lang),
-								label: 'basic_components',
-							},
-							{
-								href: getPathWithLang('/web/table', lang),
-								label: 'table',
-							},
-							{
-								href: getPathWithLang('/web/text-editor', lang),
-								label: 'text_editor',
-							},
-						],
+						key: 'UploadInvoice',
+						href: getPathWithLang('/web/upload_invoice', lang),
+						icon: Icons.Misc.Home,
+						label: 'upload_invoice',
 					},
 					{
-						href: getPathWithLang('/web/basic-components', lang),
-						label: 'basic_components',
-						icon: Icons.Misc.User,
+						key: 'UploadPackslip',
+						href: getPathWithLang('/web/upload_packslip', lang),
+						icon: Icons.Misc.Home,
+						label: 'upload_packslip',
 					},
-					{
-						href: getPathWithLang('/web/mantine_data_table', lang),
-						label: 'mantine_data_table',
-						icon: Icons.Misc.User,
-					},
-					{
-						href: getPathWithLang('/web/table', lang),
-						label: 'table',
-						icon: Icons.Misc.Clock,
-					},
-					{
-						href: getPathWithLang('/web/text-editor', lang),
-						label: 'text_editor',
-						icon: Icons.Misc.Copy,
-					},
-					{
-						href: getPathWithLang('/web/mantine_data_table', lang),
-						label: 'mantine_data_table',
-						icon: Icons.Misc.Copy,
-					},
-				],
+				].filter(Boolean),
 			},
-		]
+		].filter(Boolean)
 	}
 
 	if (key === 'public') {

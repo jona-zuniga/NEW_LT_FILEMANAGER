@@ -7,6 +7,9 @@ import {useSidebar} from '@/hooks/useSidebar'
 import {useStore} from '@/hooks/useStore'
 
 import {cn} from '@/lib/utils'
+import { useLang } from '../providers/I81nProvider'
+import React from 'react'
+import { getRoutes } from './getRoutes'
 
 export function Sidebar(props) {
 	const sidebar = useStore(useSidebar, (x) => x)

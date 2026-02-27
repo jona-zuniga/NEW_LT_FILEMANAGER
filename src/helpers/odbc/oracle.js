@@ -17,7 +17,7 @@ import oracledb from 'oracledb'
  */
 
 export default function oracle(query, params = []) {
-	// eslint-disable-next-line no-async-promise-executor
+	 
 	return new Promise(async function (resolve, reject) {
 		let connection
 		try {

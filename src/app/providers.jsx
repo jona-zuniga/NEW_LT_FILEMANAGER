@@ -14,6 +14,7 @@ import { langs } from '@/constants/langs'
 
 import getI18nLang from '@/helpers/utils/getI18nLang'
 import { ToasterComponent } from '@/components/providers/Toaster'
+import { JSONViewer } from '@/components/utils/JSONViewer'
 
 function makeQueryClient() {
 	return new QueryClient({
@@ -36,7 +37,7 @@ function getQueryClient() {
 	}
 }
 
-export default function Providers({ children, userData }) {
+export default function Providers({ children, userData, acl }) {
 	const queryClient = getQueryClient()
 	const { locale: lang } = useParams()
 	const messages = getI18nLang(lang ?? langs.en)
@@ -65,13 +66,15 @@ export default function Providers({ children, userData }) {
 	// 	}
 	// }, [])
 
+
+
 	return (
 		<ThemeProvider
 			attribute="class"
 			defaultTheme="system"
 			enableSystem
 			disableTransitionOnChange>
-			<UserProvider user={userData}>
+			<UserProvider user={userData} acl={acl}>
 				<QueryClientProvider client={queryClient}>
 					<I18nProvider messages={messages} lang={lang}>
 						<ImageViewerProvider>

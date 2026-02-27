@@ -12,8 +12,8 @@
 		"es": "Anónimo"
 	},
 	"app_name": {
-		"en": "Template",
-		"es": "Plantilla"
+		"en": "AP_APP",
+		"es": "AP_APP"
 	},
 	"basic_components": {
 		"en": "Basic components",
@@ -106,5 +106,17 @@
 	"username": {
 		"en": "Username",
 		"es": "Nombre de usuario"
+	},
+	"upload_invoice": {
+		"en": "Upload Invoice",
+		"es": "Subir factura"
+	},
+	"upload_packslip": {
+		"en": "Upload Packslip",
+		"es": "Subir boleta"
+	},
+	"uploads": {
+		"en": "Uploads",
+		"es": "Subidas"
 	}
 }

@@ -58,6 +58,7 @@ import {
 	LuUsersRound,
 	LuWarehouse,
 	LuWrench,
+	LuUpload,
 } from 'react-icons/lu'
 import {RiProductHuntFill} from 'react-icons/ri'
 
@@ -140,6 +141,18 @@ export const Icons = {
 		ParentOpen: LuFolderOpen,
 		Leaf: LuWarehouse,
 	},
+	FileManager:{
+		LuUpload: LuUpload,
+		LuClipboardList: LuClipboardList,
+		LuCircleCheck: LuCircleCheck,
+		LuReceiptText: LuReceiptText,
+		LuFile: LuFile,
+		LuCalendar: LuCalendar,
+		LuClipboardList: LuClipboardList,
+		LuCircleUserRound: LuCircleUserRound,
+		LuWarehouse: LuWarehouse,
+		LuReceiptText: LuReceiptText,
+	}
 }
 
 export default Icons

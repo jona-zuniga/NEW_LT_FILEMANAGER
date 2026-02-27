@@ -1,4 +1,7 @@
-import {createContext, useContext, useMemo} from 'react'
+"use client"
+
+import { APPNAME } from '@/constants/roles'
+import { createContext, useContext, useMemo } from 'react'
 
 const UserContext = createContext({
 	user: null,
@@ -27,15 +30,19 @@ export const UserConsumer = UserContext.Consumer
  * @param {*} user
  * @returns
  */
-export const UserProvider = ({children, user}) => {
+export const UserProvider = ({children, user, acl}) => {
 	const userData = useMemo(
 		() =>
-			user ?? {
-				user: '',
-				name: '',
-				role: '',
-			},
+			user ?? {},
 	)
 
-	return <UserContext.Provider value={userData}>{children}</UserContext.Provider>
+	const aclData = useMemo(
+		() =>
+			acl?.[APPNAME] ?? null,
+		[acl],
+	)
+
+	return <UserContext.Provider value={{...(userData ?? {}), role: aclData?.group_name, acl: aclData?.pages}}>
+		{children}     
+	</UserContext.Provider>
 }

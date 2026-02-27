@@ -65,7 +65,7 @@ process.on('SIGTERM', async () => {
  * @returns
  */
 export default async function sqlserver(query, params = {}, onlyRecordset = true) {
-	// eslint-disable-next-line no-async-promise-executor
+	 
 	return new Promise(async function (resolve, reject) {
 		try {
 			await initializePool()

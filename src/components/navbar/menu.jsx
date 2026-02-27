@@ -1,28 +1,24 @@
 'use client'
 
-import {useLang, useT} from '../providers/I81nProvider'
-import {useUser} from '../providers/UserProvider'
-import {LtlogoFull} from '../utils/LtLogo'
-import {UserNav} from './user-nav'
-import {useMutation} from '@tanstack/react-query'
-import {LogIn, LogOut} from 'lucide-react'
-import dynamic from 'next/dynamic'
-import Link from 'next/link'
-import {usePathname} from 'next/navigation'
-import {FaEllipsis} from 'react-icons/fa6'
+import { useMutation } from '@tanstack/react-query'
+import { LogIn, LogOut } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { FaEllipsis } from 'react-icons/fa6'
+import { useLang, useT } from '../providers/I81nProvider'
+import { useUser } from '../providers/UserProvider'
+import { LtlogoFull } from '../utils/LtLogo'
+import ThemeSwitcher from './theme-switcher'
+import { UserNav } from './user-nav'
 
-import {CollapseMenuButton} from '@/components/navbar/collapse-menu-button'
-import {getRoutes} from '@/components/navbar/getRoutes'
-import {Button} from '@/components/ui/button'
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from '@/components/ui/tooltip'
+import { CollapseMenuButton } from '@/components/navbar/collapse-menu-button'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-import {__login} from '@/services/login.service'
+import { __login } from '@/services/login.service'
 
-import {cn} from '@/lib/utils'
-
-const ThemeSwitcher = dynamic(() => import('@/components/navbar/theme-switcher'), {
-	ssr: false,
-})
+import { cn } from '@/lib/utils'
+import React from 'react'
+import { getRoutes } from './getRoutes'
 
 const LoginButton = ({mutLogout, isOpen}) => {
 	const t = useT()
@@ -33,7 +29,7 @@ const LoginButton = ({mutLogout, isOpen}) => {
 					<Button
 						onClick={() => mutLogout.mutate()}
 						variant="outline"
-						className="border-gray-200 px-2 py-1 text-blue-500 hover:border-blue-600 hover:bg-blue-600 hover:text-white">
+						className="border-gray-200 px-2 py-1 text-cyan-500 hover:border-cyan-600 hover:bg-cyan-600 hover:text-white">
 						<span className={cn(isOpen === false ? '' : 'mr-4')}>
 							<LogIn size={18} />
 						</span>
@@ -118,9 +114,9 @@ const UserSection = ({isOpen, version}) => {
 export function Menu({routesKey = null, isOpen, version}) {
 	const pathname = usePathname()
 	const {lang} = useLang()
-	const {role} = useUser()
+	const {role, acl} = useUser()
 	const t = useT()
-	const menuList = getRoutes(lang, routesKey, role)
+	const menuList = getRoutes(lang, routesKey, role, acl)
 
 	const isActive = (href) => {
 		return pathname == href
@@ -167,7 +163,7 @@ export function Menu({routesKey = null, isOpen, version}) {
 										<Tooltip delayDuration={100}>
 											<TooltipTrigger asChild>
 												<Button
-													variant={isActive(href) ? 'default' : 'ghost'}
+													variant={isActive(href) ? 'default2' : 'ghost'}
 													className={cn(
 														'mb-1 flex h-10 items-center',
 														isOpen === false
@@ -175,7 +171,7 @@ export function Menu({routesKey = null, isOpen, version}) {
 															: 'w-full justify-start',
 													)}
 													asChild>
-													<Link href={href} className="space-x-2">
+													<a href={href} className="space-x-2">
 														<span>
 															<Icon size={18} />
 														</span>
@@ -190,7 +186,7 @@ export function Menu({routesKey = null, isOpen, version}) {
 																{t(label)}
 															</p>
 														)}
-													</Link>
+													</a>
 												</Button>
 											</TooltipTrigger>
 											{isOpen === false && (

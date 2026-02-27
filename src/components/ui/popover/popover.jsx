@@ -13,16 +13,28 @@ const PopoverTrigger = PopoverPrimitive.Trigger
 const PopoverClose = PopoverPrimitive.Close
 
 const PopoverContent = React.forwardRef(
-	({className, align = 'center', sideOffset = 4, lengthTrigger = true, ...props}, ref) => (
+	({className, align = 'center', sideOffset = 4, lengthTrigger = false, ...props}, ref) => (
 		<PopoverPrimitive.Portal>
 			<PopoverPrimitive.Content
 				ref={ref}
 				align={align}
 				sideOffset={sideOffset}
 				className={cn(
-					'z-50 w-full rounded-md border border-slate-200 bg-white p-4 text-slate-950 shadow-md outline-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:border-slate-700 dark:bg-slate-800 ',
+					'z-50 rounded-md border border-slate-200 bg-white p-4 text-slate-950 shadow-md outline-hidden',
+					'data-[state=open]:animate-in data-[state=closed]:animate-out',
+					'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+					'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+					'data-[side=bottom]:slide-in-from-top-2',
+					'data-[side=left]:slide-in-from-right-2',
+					'data-[side=right]:slide-in-from-left-2',
+					'data-[side=top]:slide-in-from-bottom-2',
+					'dark:border-slate-700 dark:bg-slate-800',
+
+					lengthTrigger
+						? 'w-max max-w-[620px] min-w-[var(--radix-popover-trigger-width)]'
+						: 'w-full',
+
 					className,
-					lengthTrigger && 'popover-content-width-same-as-its-trigger',
 				)}
 				{...props}
 			/>

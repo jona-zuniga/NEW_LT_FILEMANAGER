@@ -1,6 +1,6 @@
 import Icons from '@/components/utils/Icons'
 
-//eslint-disable-next-line
+ 
 function ActionsCell({row}) {
 	return (
 		<div className="flex gap-2">

@@ -7,7 +7,7 @@ import mariadb from 'mariadb'
  */
 
 export default function mysql(query, params = []) {
-	// eslint-disable-next-line no-async-promise-executor
+	 
 	return new Promise(async function (resolve, reject) {
 		let connection
 

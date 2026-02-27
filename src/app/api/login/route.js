@@ -20,7 +20,7 @@ export async function POST(req) {
 
 	try {
 		const { data: { token } } = await axios.post(process.env.AUTH_MICROSERVICE_URL, { badge: user, password: pass });
-		//eslint-disable-next-line no-unused-vars
+		 
 		const { acl, hasAcl } = await getAcl(token)
 		if (!hasAcl) return Response.json('unauthorized', { ...ERR401 })
 

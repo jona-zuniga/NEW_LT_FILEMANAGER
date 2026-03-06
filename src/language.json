@@ -118,5 +118,94 @@
 	"uploads": {
 		"en": "Uploads",
 		"es": "Subidas"
+	},
+	"upload_documents": {
+		"en": "Upload documents",
+		"es": "Subir documentos"
+	},
+	"already_exists": {
+		"en": "Already exists",
+		"es": "Ya existe"
+	},
+	"cancel": {
+		"en": "Cancel",
+		"es": "Cancelar"
+	},
+	"preview": {
+		"en": "Preview",
+		"es": "Vista previa"
+	},
+	"save": {
+		"en": "Save",
+		"es": "Guardar"
+	},
+	"review": {
+		"en": "Review",
+		"es": "Revisar"
+	},
+	"save_success": {
+		"en": "Save success",
+		"es": "Guardar exitoso"
+	},
+	"save_error": {
+		"en": "Save error",
+		"es": "Error al guardar"
+	},
+	"save_failed": {
+		"en": "Save failed",
+		"es": "Fallo al guardar"
+	},
+	"invoice": {
+		"en": "Invoice",
+		"es": "Factura"
+	},
+	"other": {
+		"en": "Other",
+		"es": "Otro"
+	},
+	"packing_slip": {
+		"en": "Packing slip",
+		"es": "Boleta"
+	},
+	"invoice_no": {
+		"en": "Invoice No.",
+		"es": "No. de factura"
+	},
+	"pono": {
+		"en": "PO NO.",
+		"es": "NO. PO"
+	},
+	"invoice_date": {
+		"en": "Invoice Date",
+		"es": "Fecha de la factura"
+	},
+	"user": {
+		"en": "User",
+		"es": "Usuario"
+	},
+	"misc": {
+		"en": "Misc",
+		"es": "Misc"
+	},
+	"notes": {
+		"en": "Notes",
+		"es": "Notas"
+	},
+	"pono_selected": {
+		"en": "PO selected",
+		"es": "PO seleccionado"
+	},
+	"vendor": {
+		"en": "Vendor",
+		"es": "Proveedor"
+	},
+	"upload": {
+		"en": "Upload",
+		"es": "Subir"
+	},
+	"form": {
+		"en": "Form",
+		"es": "Formulario"
 	}
+
 }

@@ -59,6 +59,7 @@ import {
 	LuWarehouse,
 	LuWrench,
 	LuUpload,
+	LuPackage,
 } from 'react-icons/lu'
 import {RiProductHuntFill} from 'react-icons/ri'
 
@@ -152,6 +153,7 @@ export const Icons = {
 		LuCircleUserRound: LuCircleUserRound,
 		LuWarehouse: LuWarehouse,
 		LuReceiptText: LuReceiptText,
+		LuPackage : LuPackage,
 	}
 }
 

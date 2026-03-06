@@ -2,39 +2,26 @@ import {create} from 'zustand'
 
 const INITIAL_ITEM = {
 	vendors: null,
+	pono: null,
 	invoice_no: '',
 	day: '',
 	month: '',
 	year: '',
-	pono: null,
-	misc: false,
-	notes: '',
-	user: null,
 }
 
-export const useUploadFileState = create((set) => ({
+export const useUploadPackslipState = create((set) => ({
 	item: {...INITIAL_ITEM},
-
 	files: [],
 	selectedFile: null,
 	errorsFlatMap: {},
 
 	getInitialState: () => ({...INITIAL_ITEM}),
+
 	update: (payload) => set((state) => ({...state, ...payload})),
 
-	updateItem: (payload) =>
-		set((state) => ({
-			item: {...state.item, ...payload},
-		})),
+	updateItem: (payload) => set((state) => ({item: {...state.item, ...payload}})),
 
-	addFilesToSlot: (slotKey, newFiles) =>
-		set((state) => {
-			if (slotKey === 'invoice') {
-				const sinInvoice = state.files.filter((f) => f.slotKey !== 'invoice')
-				return {files: [...sinInvoice, ...newFiles]}
-			}
-			return {files: [...state.files, ...newFiles]}
-		}),
+	addFiles: (newFiles) => set((state) => ({files: [...state.files, ...newFiles]})),
 
 	removeFile: (id) =>
 		set((state) => {

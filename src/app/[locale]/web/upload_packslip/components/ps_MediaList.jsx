@@ -1,6 +1,6 @@
 'use client'
 
-import {useUploadFileState} from '../_state/uploadinvoice.state'
+import {useUploadPackslipState} from '../_state/ps_uploadPackslip.state'
 import {useState} from 'react'
 import {
 	LuCheck,
@@ -13,21 +13,6 @@ import {
 	LuX,
 } from 'react-icons/lu'
 
-const TYPE_CONFIG = {
-	invoice: {
-		tagBg: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300',
-		activeBg: 'border-cyan-300 bg-cyan-50 dark:border-cyan-700 dark:bg-cyan-950',
-	},
-	packing_slip: {
-		tagBg: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
-		activeBg: 'border-emerald-300 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950',
-	},
-	other: {
-		tagBg: 'bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300',
-		activeBg: 'border-violet-300 bg-violet-50 dark:border-violet-700 dark:bg-violet-950',
-	},
-}
-
 function FileIcon({name}) {
 	const ext = name?.split('.').pop()?.toLowerCase()
 	if (['png', 'jpg', 'jpeg', 'webp'].includes(ext))
@@ -35,18 +20,6 @@ function FileIcon({name}) {
 	if (ext === 'pdf')
 		return <LuReceiptText size={15} className="text-slate-500 dark:text-slate-400" />
 	return <LuFile size={15} className="text-slate-500 dark:text-slate-400" />
-}
-
-function SkeletonRow() {
-	return (
-		<div className="flex animate-pulse items-center gap-3 rounded-lg border border-slate-100 bg-slate-50 p-2.5 dark:border-slate-700 dark:bg-slate-800">
-			<div className="h-8 w-8 rounded-lg bg-slate-200 dark:bg-slate-700" />
-			<div className="flex flex-1 flex-col gap-1.5">
-				<div className="h-2.5 w-3/4 rounded bg-slate-200 dark:bg-slate-700" />
-				<div className="h-2 w-1/3 rounded bg-slate-200 dark:bg-slate-700" />
-			</div>
-		</div>
-	)
 }
 
 function formatSize(bytes) {
@@ -57,9 +30,7 @@ function formatSize(bytes) {
 }
 
 function FileRow({file, isActive, onSelect, onDelete}) {
-	const {update, files} = useUploadFileState((s) => s)
-	const cfg = TYPE_CONFIG[file.slotKey] ?? TYPE_CONFIG.other
-	const isExisting = file.isNew === false // ← viene de BD, sin botones
+	const {update, files} = useUploadPackslipState((s) => s)
 
 	const [editing, setEditing] = useState(false)
 	const [draft, setDraft] = useState('')
@@ -100,7 +71,7 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 			onClick={() => !editing && onSelect?.(file)}
 			className={`group flex cursor-pointer items-center gap-2 rounded-lg border p-2.5 transition-all duration-150 ${
 				isActive
-					? cfg.activeBg
+					? 'border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950'
 					: 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700'
 			} `}>
 			<div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700">
@@ -115,16 +86,16 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 							value={draft}
 							onChange={(e) => setDraft(e.target.value)}
 							onKeyDown={handleKeyDown}
-							className="w-full rounded border border-cyan-400 bg-white px-1.5 py-0.5 text-xs text-slate-800 outline-none focus:ring-1 focus:ring-cyan-400/30 dark:bg-slate-700 dark:text-slate-100"
+							className="w-full rounded border border-amber-400 bg-white px-1.5 py-0.5 text-xs text-slate-800 outline-none focus:ring-1 focus:ring-amber-400/30 dark:bg-slate-700 dark:text-slate-100"
 						/>
 						<button
 							onClick={confirmEdit}
-							className="flex-shrink-0 rounded p-0.5 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950">
+							className="flex-shrink-0 rounded p-0.5 text-emerald-500 hover:bg-emerald-50">
 							<LuCheck size={13} />
 						</button>
 						<button
 							onClick={cancelEdit}
-							className="flex-shrink-0 rounded p-0.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+							className="flex-shrink-0 rounded p-0.5 text-slate-400 hover:bg-slate-100">
 							<LuX size={13} />
 						</button>
 					</div>
@@ -141,18 +112,16 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 			</div>
 
 			{!editing && (
-				<span
-					className={`hidden flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold sm:block ${cfg.tagBg}`}>
-					{file.slotKey}
+				<span className="hidden flex-shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 sm:block dark:bg-amber-900 dark:text-amber-300">
+					pack slip
 				</span>
 			)}
 
-			{!editing && !isExisting && (
+			{!editing && file.isNew !== false && (
 				<div className="flex flex-shrink-0 items-center gap-1 md:opacity-0 md:group-hover:opacity-100">
 					<button
 						onClick={startEdit}
-						title="Rename"
-						className="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 transition-all hover:bg-cyan-100 hover:text-cyan-600 dark:hover:bg-cyan-950 dark:hover:text-cyan-400">
+						className="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-amber-100 hover:text-amber-600 dark:hover:bg-amber-950 dark:hover:text-amber-400">
 						<LuPencil size={12} />
 					</button>
 					<button
@@ -160,8 +129,7 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 							e.stopPropagation()
 							onDelete?.(file.id)
 						}}
-						title="Delete"
-						className="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 transition-all hover:bg-red-100 hover:text-red-500 dark:hover:bg-red-950 dark:hover:text-red-400">
+						className="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-red-100 hover:text-red-500">
 						<LuTrash2 size={13} />
 					</button>
 				</div>
@@ -170,25 +138,14 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 	)
 }
 
-export default function MediaList({files = [], activeFileId, onSelect, onDelete, loading = false}) {
-	if (loading) {
-		return (
-			<div className="flex flex-col gap-1.5">
-				<SectionLabel count={0} />
-				{[1, 2, 3].map((i) => (
-					<SkeletonRow key={i} />
-				))}
-			</div>
-		)
-	}
-
+export default function MediaListPS({files = [], activeFileId, onSelect, onDelete}) {
 	if (!files.length) {
 		return (
 			<div className="flex flex-col gap-1.5">
 				<SectionLabel count={0} />
 				<div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 py-6 dark:border-slate-700">
-					<LuDatabaseZap size={24} className="text-slate-300 dark:text-slate-600" />
-					<p className="text-xs text-slate-400">No files yet</p>
+					<LuDatabaseZap size={22} className="text-slate-300 dark:text-slate-600" />
+					<p className="text-xs text-slate-400">No files</p>
 				</div>
 			</div>
 		)
@@ -219,7 +176,7 @@ function SectionLabel({count}) {
 				Uploaded files
 			</p>
 			{count > 0 && (
-				<span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+				<span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:bg-amber-900 dark:text-amber-300">
 					{count}
 				</span>
 			)}

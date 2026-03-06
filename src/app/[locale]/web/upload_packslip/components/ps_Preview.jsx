@@ -5,13 +5,13 @@ import {LuDatabaseZap, LuDownload, LuEye, LuLoader} from 'react-icons/lu'
 
 function PreviewEmpty() {
 	return (
-		<div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900">
-			<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
-				<LuDatabaseZap size={26} className="text-slate-400 dark:text-slate-500" />
+		<div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-amber-200 bg-amber-50/30 dark:border-amber-900 dark:bg-amber-950/10">
+			<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/40">
+				<LuDatabaseZap size={26} className="text-amber-400 dark:text-amber-600" />
 			</div>
 			<div className="px-4 text-center">
 				<p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-					Select a file to preview
+					Select file to preview
 				</p>
 				<p className="text-xs text-slate-400 dark:text-slate-500">
 					PDF and images supported
@@ -30,7 +30,6 @@ function PreviewToolbar({fileName, onDownload}) {
 			</div>
 			<button
 				onClick={onDownload}
-				title="Download"
 				className="ml-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/5 text-white/50 transition-all hover:bg-white/10 hover:text-white">
 				<LuDownload size={13} />
 			</button>
@@ -38,20 +37,33 @@ function PreviewToolbar({fileName, onDownload}) {
 	)
 }
 
-function usePdfBlobUrl(src) {
+export default function PreviewPS({selectedFile}) {
+	const name = selectedFile?.name
+	const file = selectedFile?.file
+	const img = selectedFile?.img
+	const viewUrl = selectedFile?.viewUrl
+
+	const ext = name?.split('.').pop()?.toLowerCase()
+	const isPdf = ext === 'pdf'
+	const isImage = ['png', 'jpg', 'jpeg', 'webp'].includes(ext ?? '')
+	const src = viewUrl || img || (file ? URL.createObjectURL(file) : null)
+
 	const [blobUrl, setBlobUrl] = useState(null)
 	const [loading, setLoading] = useState(false)
 
 	useEffect(() => {
-		if (!src) return
+		if (!isPdf || !src) {
+			setBlobUrl(null)
+			return
+		}
 		let objectUrl = null
 
 		if (src.startsWith('blob:')) {
-			queueMicrotask(() => setBlobUrl(src))
+			setBlobUrl(src)
 			return
 		}
 
-		queueMicrotask(() => setLoading(true))
+		setLoading(true)
 		fetch(src)
 			.then((res) => res.blob())
 			.then((blob) => {
@@ -62,24 +74,9 @@ function usePdfBlobUrl(src) {
 			.finally(() => setLoading(false))
 
 		return () => {
-			if (objectUrl && !src.startsWith('blob:')) URL.revokeObjectURL(objectUrl)
+			if (objectUrl) URL.revokeObjectURL(objectUrl)
 		}
-	}, [src])
-
-	return {blobUrl, loading}
-}
-
-export default function Preview({selectedFile}) {
-	const {name, file, img, viewUrl} = selectedFile || {}
-	const ext = name?.split('.').pop()?.toLowerCase()
-	const isPdf = ext === 'pdf'
-	const isImage = ['png', 'jpg', 'jpeg', 'webp'].includes(ext)
-
-	const src = viewUrl || img || (file ? URL.createObjectURL(file) : null)
-
-	const {blobUrl, loading} = usePdfBlobUrl(src, isPdf)
-
-	if (!selectedFile) return <PreviewEmpty />
+	}, [src, isPdf])
 
 	const handleDownload = () => {
 		if (!src) return
@@ -89,10 +86,11 @@ export default function Preview({selectedFile}) {
 		a.click()
 	}
 
+	if (!selectedFile) return <PreviewEmpty />
+
 	return (
 		<div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
 			<PreviewToolbar fileName={name} onDownload={handleDownload} />
-
 			<div className="flex w-full flex-1 items-center justify-center overflow-auto bg-slate-800 p-3 md:p-6">
 				{isPdf &&
 					(loading ? (
@@ -110,7 +108,6 @@ export default function Preview({selectedFile}) {
 							/>
 						)
 					))}
-
 				{isImage && src && (
 					<img
 						src={src}
@@ -118,7 +115,6 @@ export default function Preview({selectedFile}) {
 						className="max-h-full max-w-full rounded object-contain shadow-2xl"
 					/>
 				)}
-
 				{!isPdf && !isImage && (
 					<div className="flex flex-col items-center gap-3 text-white/40">
 						<LuDatabaseZap size={36} />

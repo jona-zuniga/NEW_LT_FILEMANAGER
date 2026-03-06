@@ -85,26 +85,7 @@ function ComboboxInput({
 	...props
 }) {
 	return (
-		// <InputGroup className={cn('w-auto', className)}>
-		// 	<ComboboxPrimitive.Input render={<InputGroupInput disabled={disabled} />} {...props} />
-		// 	<InputGroupAddon align="inline-end">
-		// 		{showTrigger && !showLoader && !showError && (
-		// 			<InputGroupButton
-		// 				size="icon-xs"
-		// 				variant="ghost"
-		// 				asChild
-		// 				data-slot="input-group-button"
-		// 				className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
-		// 				disabled={disabled}>
-		// 				<ComboboxTrigger />
-		// 			</InputGroupButton>
-		// 		)}
-		// 		{showClear && !showLoader && !showError && <ComboboxClear disabled={disabled} />}
-		// 		{showLoader && <ComboboxLoader />}
-		// 		{showError && !showLoader && <ComboboxError onClick={() => refetch?.()} />}
-		// 	</InputGroupAddon>
-		// 	{children}
-		// </InputGroup>
+
 
 		<InputGroup className={cn('w-auto', className)}>
 			{/* ICONO IZQUIERDO */}

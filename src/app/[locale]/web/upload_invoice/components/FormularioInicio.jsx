@@ -3,16 +3,27 @@
 import {useUploadFileState} from '../_state/uploadinvoice.state'
 import {Building} from 'lucide-react'
 import {useEffect, useState} from 'react'
-import {LuCircleUserRound, LuClipboardList} from 'react-icons/lu'
+import {LuCircleUserRound, LuClipboardList, LuLoader} from 'react-icons/lu'
 
 import {useT} from '@/components/providers/I81nProvider'
 import {ComboboxVirtualized} from '@/components/utils/ComboboxVirtualized'
 import Icons from '@/components/utils/Icons'
 
 import getPonoxVendor from '@/helpers/queries/filemanager/getPonoxvendor'
+
+import {useCheckInvoice} from '@/hooks/useCheckInvoice'
 import {useCombobox} from '@/hooks/useCombobox'
 
-function InputField({label, icon: Icon, placeholder, value, onChange, type = 'text', required}) {
+function InputField({
+	label,
+	icon: Icon,
+	placeholder,
+	value,
+	onChange,
+	type = 'text',
+	required,
+	suffix,
+}) {
 	return (
 		<div className="flex flex-col gap-1.5">
 			<label className="flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400">
@@ -32,6 +43,11 @@ function InputField({label, icon: Icon, placeholder, value, onChange, type = 'te
 					placeholder={placeholder}
 					className={`w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 text-sm text-slate-800 transition-all duration-150 outline-none placeholder:text-slate-300 focus:border-cyan-400 focus:bg-white focus:ring-2 focus:ring-cyan-400/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-cyan-500 dark:focus:bg-slate-600 ${Icon ? 'pr-3 pl-8' : 'px-3'}`}
 				/>
+				{suffix && (
+					<div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+						{suffix}
+					</div>
+				)}
 			</div>
 		</div>
 	)
@@ -59,14 +75,14 @@ const CustomComboboxUsers = ({item}) => (
 	</div>
 )
 
-export default function FormularioInicio({vendors = [], users = []}) {
+export default function FormularioInicio({vendors = [], users = [], onExistingFound}) {
 	const t = useT()
 
 	const {item, update, updateItem, getInitialState} = useUploadFileState((state) => state)
 
 	const comboboxSetAsyncvendors = useCombobox()
-	const comboboxSetAsyncPono    = useCombobox()
-	const comboboxSetAsyncUsers   = useCombobox()
+	const comboboxSetAsyncPono = useCombobox()
+	const comboboxSetAsyncUsers = useCombobox()
 
 	const [ponoOptions, setPonoOptions] = useState([])
 
@@ -79,12 +95,31 @@ export default function FormularioInicio({vendors = [], users = []}) {
 		fetchPonos()
 	}, [item?.vendors])
 
+	const {existing, meta, checking, hasExisting} = useCheckInvoice({
+		invoice_no: item?.invoice_no,
+		vendors_id: item?.vendors?.ID,
+	})
+
+	useEffect(() => {
+		if (!hasExisting) {
+			onExistingFound?.([])
+			return
+		}
+		if (meta?.invoice_date) {
+			const d = new Date(meta.invoice_date)
+			updateItem({
+				year: String(d.getFullYear()),
+				month: String(d.getMonth() + 1).padStart(2, '0'),
+				day: String(d.getDate()).padStart(2, '0'),
+			})
+		}
+		onExistingFound?.(existing)
+	}, [hasExisting, existing, meta])
 
 	const vendorTienePonos = ponoOptions.length > 0
-
 	const ponoDisabled = !vendorTienePonos || !!item?.misc
-	const miscDisabled = vendorTienePonos && !!item?.pono?.ID  
-	const userDisabled = vendorTienePonos && !item?.misc      
+	const miscDisabled = vendorTienePonos && !!item?.pono?.ID
+	const userDisabled = vendorTienePonos && !item?.misc
 
 	return (
 		<div className="flex flex-col gap-3">
@@ -93,7 +128,7 @@ export default function FormularioInicio({vendors = [], users = []}) {
 			</p>
 
 			<label className="text-[10px] font-semibold tracking-widest text-slate-400 capitalize">
-				{t('Vendor')}
+				{t('vendor')}
 			</label>
 			<ComboboxVirtualized
 				estimateSize={60}
@@ -113,14 +148,28 @@ export default function FormularioInicio({vendors = [], users = []}) {
 			/>
 
 			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-				<InputField
-					label="Invoice No."
-					icon={Icons.Misc.Clipboard}
-					placeholder="INV-0001"
-					value={item?.invoice_no ?? ''}
-					onChange={(e) => updateItem({invoice_no: e.target.value})}
-					required
-				/>
+				<div className="flex flex-col gap-1.5">
+					<InputField
+						label={t('invoice_no')}
+						icon={Icons.Misc.Clipboard}
+						placeholder="INV-0001"
+						value={item?.invoice_no ?? ''}
+						onChange={(e) => updateItem({invoice_no: e.target.value})}
+						required
+						suffix={
+							checking ? (
+								<LuLoader size={12} className="animate-spin text-slate-400" />
+							) : null
+						}
+					/>
+					{hasExisting && !checking && (
+						<span className="flex items-center gap-1 text-[10px] font-semibold text-amber-500">
+							<span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+							Already uploaded — {existing.length} file
+							{existing.length > 1 ? 's' : ''} found
+						</span>
+					)}
+				</div>
 
 				<div className="flex flex-col gap-1.5">
 					<label className="text-[10px] font-semibold tracking-widest text-slate-400 capitalize">
@@ -147,7 +196,7 @@ export default function FormularioInicio({vendors = [], users = []}) {
 
 			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
 				<InputField
-					label="Invoice Date"
+					label={t('invoice_date')}
 					icon={Icons.Misc.Calendar}
 					type="date"
 					value={
@@ -166,33 +215,31 @@ export default function FormularioInicio({vendors = [], users = []}) {
 					<label className="text-[10px] font-semibold tracking-widest text-slate-400 capitalize">
 						{t('user')}
 					</label>
-<ComboboxVirtualized
-    estimateSize={60}
-    comboboxSet={{
-        ...comboboxSetAsyncUsers,
-        value: item?.user ?? null,
-    }}
-    itemToId={(item) => item.BADGE}
-    itemToStringLabel={(item) => item.EMPLOYEE}
-    itemRender={(item) => <CustomComboboxUsers item={item} />}
-    searchParams={['BADGE']}
-    Get={users}
-    Icon={LuCircleUserRound}
-    cleareable
-    disabled={userDisabled}
-   onChange={(selected) =>
-  updateItem({ user: selected ?? null })
-}
-/>
+					<ComboboxVirtualized
+						estimateSize={60}
+						comboboxSet={{
+							...comboboxSetAsyncUsers,
+							value: item?.user ?? null,
+						}}
+						itemToId={(item) => item.BADGE}
+						itemToStringLabel={(item) => item.EMPLOYEE}
+						itemRender={(item) => <CustomComboboxUsers item={item} />}
+						searchParams={['BADGE']}
+						Get={users}
+						Icon={LuCircleUserRound}
+						cleareable
+						disabled={userDisabled}
+						onChange={(selected) => updateItem({user: selected ?? null})}
+					/>
 				</div>
 			</div>
 
-			<div className={`flex items-center gap-2 rounded-lg border px-3 py-2 transition-all duration-200
-				${miscDisabled
-					? 'border-slate-100 bg-slate-50 opacity-50 dark:border-slate-700 dark:bg-slate-800'
-					: 'border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700'
-				}`}
-			>
+			<div
+				className={`flex items-center gap-2 rounded-lg border px-3 py-2 transition-all duration-200 ${
+					miscDisabled
+						? 'border-slate-100 bg-slate-50 opacity-50 dark:border-slate-700 dark:bg-slate-800'
+						: 'border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700'
+				}`}>
 				<input
 					type="checkbox"
 					id="misc-check"
@@ -209,24 +256,22 @@ export default function FormularioInicio({vendors = [], users = []}) {
 				/>
 				<label
 					htmlFor="misc-check"
-					className={`text-xs font-medium select-none
-						${miscDisabled
+					className={`text-xs font-medium select-none ${
+						miscDisabled
 							? 'cursor-not-allowed text-slate-400'
 							: 'cursor-pointer text-slate-600 dark:text-slate-300'
-						}`}
-				>
+					}`}>
 					{t('misc')}
 				</label>
-
 				{miscDisabled && vendorTienePonos && (
 					<span className="ml-auto text-[10px] text-slate-400 dark:text-slate-500">
-						PO selected
+						{t('pono_selected')}
 					</span>
 				)}
 			</div>
 
 			{item?.misc && (
-				<div className="flex flex-col gap-1.5 duration-200 animate-in fade-in slide-in-from-top-1">
+				<div className="animate-in fade-in slide-in-from-top-1 flex flex-col gap-1.5 duration-200">
 					<label className="text-[10px] font-semibold tracking-widest text-slate-400 capitalize">
 						{t('notes')}
 					</label>
@@ -235,7 +280,7 @@ export default function FormularioInicio({vendors = [], users = []}) {
 						value={item?.notes ?? ''}
 						onChange={(e) => updateItem({notes: e.target.value})}
 						placeholder="Add notes..."
-						className="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 p-2 text-sm outline-none transition-all focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+						className="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 p-2 text-sm transition-all outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
 					/>
 				</div>
 			)}

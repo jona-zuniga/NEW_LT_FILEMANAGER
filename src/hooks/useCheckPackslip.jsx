@@ -1,4 +1,3 @@
-// hooks/useCheckPackslip.js
 import {useEffect, useRef, useState} from 'react'
 
 export function useCheckPackslip({po_number, vendors_id, delay = 800}) {
@@ -39,7 +38,6 @@ export function useCheckPackslip({po_number, vendors_id, delay = 800}) {
 	}, [po_number, vendors_id])
 
 	const hasExisting = existing.length > 0
-	// merged = true cuando el packslip ya fue unido a su invoice
 	const isMerged = meta?.merged ?? false
 
 	return {existing, meta, checking, hasExisting, isMerged}

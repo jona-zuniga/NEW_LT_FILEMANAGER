@@ -74,7 +74,7 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 					? 'border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950'
 					: 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700'
 			} `}>
-			<div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700">
+			<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700">
 				<FileIcon name={file.name} />
 			</div>
 
@@ -90,12 +90,12 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 						/>
 						<button
 							onClick={confirmEdit}
-							className="flex-shrink-0 rounded p-0.5 text-emerald-500 hover:bg-emerald-50">
+							className="shrink-0 rounded p-0.5 text-emerald-500 hover:bg-emerald-50">
 							<LuCheck size={13} />
 						</button>
 						<button
 							onClick={cancelEdit}
-							className="flex-shrink-0 rounded p-0.5 text-slate-400 hover:bg-slate-100">
+							className="shrink-0 rounded p-0.5 text-slate-400 hover:bg-slate-100">
 							<LuX size={13} />
 						</button>
 					</div>
@@ -112,13 +112,13 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 			</div>
 
 			{!editing && (
-				<span className="hidden flex-shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 sm:block dark:bg-amber-900 dark:text-amber-300">
+				<span className="hidden shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 sm:block dark:bg-amber-900 dark:text-amber-300">
 					pack slip
 				</span>
 			)}
 
 			{!editing && file.isNew !== false && (
-				<div className="flex flex-shrink-0 items-center gap-1 md:opacity-0 md:group-hover:opacity-100">
+				<div className="flex shrink-0 items-center gap-1 md:opacity-0 md:group-hover:opacity-100">
 					<button
 						onClick={startEdit}
 						className="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-amber-100 hover:text-amber-600 dark:hover:bg-amber-950 dark:hover:text-amber-400">

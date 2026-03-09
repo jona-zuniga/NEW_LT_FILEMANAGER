@@ -18,7 +18,6 @@ function ErrorSpan({error}) {
 	return <span className="text-xs text-red-500">{error}</span>
 }
 
-// InputField igual al de invoice pero con focus amber
 function InputField({
 	label,
 	icon: Icon,
@@ -91,7 +90,6 @@ export default function FormularioPackslip({vendors = [], onExistingFound}) {
 		fetchPonos()
 	}, [item?.vendors])
 
-	// Debounce por pono + vendor — igual que invoice busca por invoice_no
 	const {existing, meta, checking, hasExisting, isMerged} = useCheckPackslip({
 		po_number: item?.pono?.INFO,
 		vendors_id: item?.vendors?.ID,
@@ -148,9 +146,7 @@ export default function FormularioPackslip({vendors = [], onExistingFound}) {
 				<ErrorSpan error={errorsFlatMap?.vendors?.[0]} />
 			</div>
 
-			{/* Invoice No + PO Number */}
 			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-				{/* Invoice No — sin spinner, solo referencia */}
 				<div className="flex flex-col gap-1.5">
 					<InputField
 						label="Invoice No."
@@ -163,7 +159,6 @@ export default function FormularioPackslip({vendors = [], onExistingFound}) {
 					<ErrorSpan error={errorsFlatMap?.invoice_no?.[0]} />
 				</div>
 
-				{/* PO Number — spinner aquí porque es el que dispara el check */}
 				<div className="flex flex-col gap-1.5">
 					<label className="flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400">
 						PO Number <span className="text-red-400">*</span>
@@ -180,14 +175,12 @@ export default function FormularioPackslip({vendors = [], onExistingFound}) {
 						cleareable
 						disabled={!item?.vendors?.ID}
 						onChange={(selected) => updateItem({pono: selected})}
-						// Spinner igual que invoice — suffix dentro del combobox
 						suffix={
 							checking ? (
 								<LuLoader size={12} className="animate-spin text-slate-400" />
 							) : null
 						}
 					/>
-					{/* Badge debajo — igual que invoice */}
 					{hasExisting && !checking && (
 						<span className="flex items-center gap-1 text-[10px] font-semibold text-amber-500">
 							<span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
@@ -200,7 +193,6 @@ export default function FormularioPackslip({vendors = [], onExistingFound}) {
 				</div>
 			</div>
 
-			{/* Received Date */}
 			<div className="flex flex-col gap-1.5">
 				<InputField
 					label="Received Date"

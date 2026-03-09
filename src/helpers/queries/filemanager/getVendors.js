@@ -1,7 +1,6 @@
 'use server'
 
-import oracle from "@/helpers/odbc/oracle"
-
+import oracle from '@/helpers/odbc/oracle'
 
 const query = `
    SELECT c.* FROM (
@@ -35,7 +34,6 @@ const query = `
 export default async function getVendors() {
 	try {
 		const res = await oracle(query)
-       //console.log('Respuesta Oracle:', res)
 		return res
 	} catch (error) {
 		console.error(error)

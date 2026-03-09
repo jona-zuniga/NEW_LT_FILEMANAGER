@@ -36,7 +36,7 @@ export const invoiceItemSchema = z
 		pono: ponoSchema.nullable().optional(),
 		misc: z.boolean().optional().default(false),
 		notes: z.string().optional(),
-		user: userSchema.nullable().optional(), // ← campo user como objeto
+		user: userSchema.nullable().optional(),
 	})
 	.refine((data) => !data.misc || (!!data.notes && data.notes.trim().length > 0), {
 		message: 'Notes are required when Misc is active',

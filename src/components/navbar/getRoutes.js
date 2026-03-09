@@ -1,15 +1,14 @@
+import {useUser} from '../providers/UserProvider'
+
 import Icons from '@/components/utils/Icons'
-import { useUser } from '../providers/UserProvider'
 
 const getPathWithLang = (path, lang) => `/${lang}${path}`
 
 export const getRoutes = (lang, key, acl) => {
-
 	if (key === 'web') {
 		return [
-			
 			//acl?.['FileStorage'] &&
-			 {
+			{
 				groupLabel: '',
 				menus: [
 					{
@@ -21,19 +20,19 @@ export const getRoutes = (lang, key, acl) => {
 				].filter(Boolean),
 			},
 			{
-				groupLabel: 'Uploads',
+				groupLabel: 'uploads',
 				icon: Icons.Misc.Home,
 				menus: [
 					{
 						key: 'UploadInvoice',
 						href: getPathWithLang('/web/upload_invoice', lang),
-						icon: Icons.Misc.Home,
+						icon: Icons.FileManager.LuReceiptText,
 						label: 'upload_invoice',
 					},
 					{
 						key: 'UploadPackslip',
 						href: getPathWithLang('/web/upload_packslip', lang),
-						icon: Icons.Misc.Home,
+						icon: Icons.FileManager.LuPackage,
 						label: 'upload_packslip',
 					},
 				].filter(Boolean),

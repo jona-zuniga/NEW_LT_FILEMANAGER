@@ -7,8 +7,6 @@ import sqlserver from '@/helpers/odbc/sqlserver'
 
 const SECRET = new TextEncoder().encode(process.env.SECRET_KEY)
 
-// JWT firmado con hash — el endpoint view busca la route en BD
-// así si el archivo se mueve por merge, el hash siempre apunta a la ruta actual
 async function buildViewUrl(hash) {
 	const token = await new SignJWT({fileHash: hash})
 		.setProtectedHeader({alg: 'HS256'})
@@ -59,7 +57,7 @@ export async function GET(req) {
 				merge: row.merge,
 				hash: row.hash,
 				isNew: false,
-				viewUrl: await buildViewUrl(row.hash), // ← hash, no route
+				viewUrl: await buildViewUrl(row.hash),
 			})),
 		)
 

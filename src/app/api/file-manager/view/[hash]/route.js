@@ -1,23 +1,21 @@
-// GET /api/file-manager/view/[hash]
-// Soporta JWT con fileHash (nuevo) y filePath (legacy)
-
-import sqlserver from '@/helpers/odbc/sqlserver'
 import fs from 'fs'
 import {jwtVerify} from 'jose'
 import path from 'path'
 
+import sqlserver from '@/helpers/odbc/sqlserver'
+
 function getMimeTypeFromExtension(ext) {
 	const map = {
-		'pdf':  'application/pdf',
-		'jpg':  'image/jpeg',
-		'jpeg': 'image/jpeg',
-		'png':  'image/png',
-		'webp': 'image/webp',
-		'doc':  'application/msword',
-		'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		'xls':  'application/vnd.ms-excel',
-		'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-		'txt':  'text/plain',
+		pdf: 'application/pdf',
+		jpg: 'image/jpeg',
+		jpeg: 'image/jpeg',
+		png: 'image/png',
+		webp: 'image/webp',
+		doc: 'application/msword',
+		docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		xls: 'application/vnd.ms-excel',
+		xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		txt: 'text/plain',
 	}
 	return map[ext?.toLowerCase()] || 'application/octet-stream'
 }
@@ -32,23 +30,18 @@ export async function GET(req, {params}) {
 	try {
 		const {hash} = await params
 
-		const {payload} = await jwtVerify(
-			hash,
-			new TextEncoder().encode(process.env.SECRET_KEY),
-		)
+		const {payload} = await jwtVerify(hash, new TextEncoder().encode(process.env.SECRET_KEY))
 
 		let filePath
 
 		if (payload.fileHash) {
-			// ── Nuevo — busca route en BD por hash ──
 			const result = await sqlserver(queryByHash, {hash: payload.fileHash}, false)
-			filePath     = result?.recordset?.[0]?.route
+			filePath = result?.recordset?.[0]?.route
 
 			if (!filePath) {
 				return new Response('File not found', {status: 404})
 			}
 		} else if (payload.filePath) {
-			// ── Legacy — ruta física directa en el JWT ──
 			filePath = payload.filePath
 		} else {
 			return new Response('Invalid token', {status: 400})
@@ -59,13 +52,13 @@ export async function GET(req, {params}) {
 			return new Response('File not found on disk', {status: 404})
 		}
 
-		const fileBuffer  = fs.readFileSync(filePath)
-		const ext         = path.extname(filePath).slice(1)
+		const fileBuffer = fs.readFileSync(filePath)
+		const ext = path.extname(filePath).slice(1)
 		const contentType = getMimeTypeFromExtension(ext)
 
 		return new Response(fileBuffer, {
 			headers: {
-				'Content-Type':        contentType,
+				'Content-Type': contentType,
 				'Content-Disposition': `inline; filename="${path.basename(filePath)}"`,
 			},
 		})

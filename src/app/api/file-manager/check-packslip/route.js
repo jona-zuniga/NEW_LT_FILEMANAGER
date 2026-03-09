@@ -1,16 +1,52 @@
-// GET /api/file-manager/check-packslip?po_number=X&vendors_id=Y
+import {generateFileHash} from '../../upload_packslip/helpers'
+
 import {ERR500} from '@/constants/responses'
 
 import sqlserver from '@/helpers/odbc/sqlserver'
 
-const query = `
+const queryPackslips = `
 	SELECT id, invoice_no, [file], file_type, route, po_number,
-	       invoice_date, misc, vendor, vendors_id, [merge], hash
+	       received_date, vendor, vendors_id, [merge], hash
 	FROM [lt_accounting_filemanager].${process.env.MSSQL_SCHEMA}.[tbl_af_file_names]
 	WHERE po_number  = @po_number
 	  AND vendors_id = @vendors_id
+	  AND file_type  = 'packing_slip'
 	ORDER BY stamp DESC
 `
+
+const queryMergedAll = `
+	SELECT id, invoice_no, [file], file_type, route, po_number,
+	       received_date, vendor, vendors_id, [merge], hash
+	FROM [lt_accounting_filemanager].${process.env.MSSQL_SCHEMA}.[tbl_af_file_names]
+	WHERE invoice_no = @invoice_no
+	  AND vendors_id = @vendors_id
+	ORDER BY stamp DESC
+`
+
+async function mapRow(row) {
+	const freshHash = await generateFileHash(row.route)
+	return {
+		id: row.id,
+		name: row.file,
+		file_type: row.file_type,
+		slotKey:
+			row.file_type === 'invoice'
+				? 'invoice'
+				: row.file_type === 'packing_slip'
+					? 'packing_slip'
+					: 'other',
+		route: row.route,
+		po_number: row.po_number,
+		received_date: row.received_date,
+		invoice_no: row.invoice_no,
+		vendor: row.vendor,
+		vendors_id: row.vendors_id,
+		merge: row.merge,
+		hash: freshHash,
+		isNew: false,
+		viewUrl: `/api/file-manager/view/${freshHash}`,
+	}
+}
 
 export async function GET(req) {
 	try {
@@ -20,45 +56,35 @@ export async function GET(req) {
 
 		if (!po_number || !vendors_id) return Response.json({files: []})
 
-		const result = await sqlserver(query, {po_number, vendors_id}, false)
-		const rows = result?.recordset ?? []
+		const psResult = await sqlserver(queryPackslips, {po_number, vendors_id}, false)
+		const psRows = psResult?.recordset ?? []
 
-		if (!rows.length) return Response.json({files: []})
+		if (!psRows.length) return Response.json({files: []})
 
-		const files = rows.map((row) => ({
-			id: row.id,
-			name: row.file,
-			file: row.file,
-			file_type: row.file_type,
-			slotKey:
-				row.file_type === 'invoice'
-					? 'invoice'
-					: row.file_type === 'packing_slip'
-						? 'packing_slip'
-						: 'other',
-			route: row.route,
-			po_number: row.po_number,
-			invoice_date: row.invoice_date,
-			invoice_no: row.invoice_no,
-			vendor: row.vendor,
-			vendors_id: row.vendors_id,
-			merge: row.merge,
-			hash: row.hash,
-			isNew: false,
-			// hash ya es el JWT con filePath — se usa directo como viewUrl
-			viewUrl: `/api/file-manager/view/${row.hash}`,
-		}))
+		const hasMerge = psRows.some((r) => r.merge === 1)
+		const invoice_no = psRows[0].invoice_no
 
-		const first = rows[0]
+		let allFiles
+
+		if (hasMerge && invoice_no) {
+			const mergedResult = await sqlserver(queryMergedAll, {invoice_no, vendors_id}, false)
+			const mergedRows = mergedResult?.recordset ?? []
+			allFiles = await Promise.all(mergedRows.map(mapRow))
+		} else {
+			allFiles = await Promise.all(psRows.map(mapRow))
+		}
+
+		const first = psRows[0]
 		const meta = {
 			vendor: first.vendor,
 			vendors_id: first.vendors_id,
 			po_number: first.po_number,
-			invoice_date: first.invoice_date,
+			received_date: first.received_date,
 			invoice_no: first.invoice_no,
+			merged: hasMerge,
 		}
 
-		return Response.json({files, meta})
+		return Response.json({files: allFiles, meta})
 	} catch (error) {
 		console.error(error)
 		return Response.json({files: [], error: true}, ERR500)

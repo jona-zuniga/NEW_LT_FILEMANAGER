@@ -22,7 +22,7 @@ function sanitizeInvoiceNo(str) {
 export async function generateFileHash(filePath) {
 	return await new SignJWT({filePath})
 		.setProtectedHeader({alg: 'HS256', typ: 'JWT'})
-		.setExpirationTime('10m')
+		.setExpirationTime('365d')
 		.sign(new TextEncoder().encode(process.env.SECRET_KEY))
 }
 

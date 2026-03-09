@@ -103,7 +103,7 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 					? cfg.activeBg
 					: 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700'
 			} `}>
-			<div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700">
+			<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700">
 				<FileIcon name={file.name} />
 			</div>
 
@@ -119,12 +119,12 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 						/>
 						<button
 							onClick={confirmEdit}
-							className="flex-shrink-0 rounded p-0.5 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950">
+							className="shrink-0 rounded p-0.5 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950">
 							<LuCheck size={13} />
 						</button>
 						<button
 							onClick={cancelEdit}
-							className="flex-shrink-0 rounded p-0.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+							className="shrink-0 rounded p-0.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
 							<LuX size={13} />
 						</button>
 					</div>
@@ -142,13 +142,13 @@ function FileRow({file, isActive, onSelect, onDelete}) {
 
 			{!editing && (
 				<span
-					className={`hidden flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold sm:block ${cfg.tagBg}`}>
+					className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold sm:block ${cfg.tagBg}`}>
 					{file.slotKey}
 				</span>
 			)}
 
 			{!editing && !isExisting && (
-				<div className="flex flex-shrink-0 items-center gap-1 md:opacity-0 md:group-hover:opacity-100">
+				<div className="flex shrink-0 items-center gap-1 md:opacity-0 md:group-hover:opacity-100">
 					<button
 						onClick={startEdit}
 						title="Rename"

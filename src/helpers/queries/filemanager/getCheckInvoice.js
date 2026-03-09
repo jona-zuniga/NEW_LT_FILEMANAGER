@@ -1,13 +1,11 @@
-// GET /api/file-manager/check-invoice?invoice_no=X&vendors_id=Y
-// Busca en BD sin importar si está en _inbox o ya mergeado (merge 0 o 1)
+import {SignJWT} from 'jose'
 
 import {ERR500} from '@/constants/responses'
+
 import sqlserver from '@/helpers/odbc/sqlserver'
-import {SignJWT} from 'jose'
 
 const SECRET = new TextEncoder().encode(process.env.SECRET_KEY)
 
-// Genera JWT con la ruta física para servir el archivo en el iframe
 async function buildViewUrl(route) {
 	const token = await new SignJWT({filePath: route})
 		.setProtectedHeader({alg: 'HS256'})
@@ -28,51 +26,49 @@ const query = `
 export async function GET(req) {
 	try {
 		const {searchParams} = new URL(req.url)
-		const invoice_no  = searchParams.get('invoice_no')
-		const vendors_id  = searchParams.get('vendors_id')
+		const invoice_no = searchParams.get('invoice_no')
+		const vendors_id = searchParams.get('vendors_id')
 
 		if (!invoice_no || !vendors_id) {
 			return Response.json({files: []})
 		}
 
 		const result = await sqlserver(query, {invoice_no, vendors_id}, false)
-		const rows   = result?.recordset ?? []
+		const rows = result?.recordset ?? []
 
 		if (!rows.length) return Response.json({files: []})
 
-		// Construir viewUrl para cada archivo (JWT firmado con la ruta física)
 		const files = await Promise.all(
 			rows.map(async (row) => ({
-				id:           row.id,
-				name:         row.file,
-				file:         row.file,
-				file_type:    row.file_type,
-				// slotKey para que MediaList use los colores correctos
-				slotKey:      row.file_type === 'invoice'
-					? 'invoice'
-					: row.file_type === 'packing_slip'
-						? 'packing_slip'
-						: 'other',
-				route:        row.route,
-				po_number:    row.po_number,
+				id: row.id,
+				name: row.file,
+				file: row.file,
+				file_type: row.file_type,
+				slotKey:
+					row.file_type === 'invoice'
+						? 'invoice'
+						: row.file_type === 'packing_slip'
+							? 'packing_slip'
+							: 'other',
+				route: row.route,
+				po_number: row.po_number,
 				invoice_date: row.invoice_date,
-				vendor:       row.vendor,
-				vendors_id:   row.vendors_id,
-				merge:        row.merge,
-				hash:         row.hash,
-				isNew:        false,       // ← existente, no nuevo
-				viewUrl:      await buildViewUrl(row.route), // ← para el iframe
-			}))
+				vendor: row.vendor,
+				vendors_id: row.vendors_id,
+				merge: row.merge,
+				hash: row.hash,
+				isNew: false,
+				viewUrl: await buildViewUrl(row.route),
+			})),
 		)
 
-		// Meta del primer registro para llenar el formulario
 		const first = rows[0]
-		const meta  = {
-			vendor:       first.vendor,
-			vendors_id:   first.vendors_id,
-			po_number:    first.po_number,
+		const meta = {
+			vendor: first.vendor,
+			vendors_id: first.vendors_id,
+			po_number: first.po_number,
 			invoice_date: first.invoice_date,
-			invoice_no:   first.invoice_no,
+			invoice_no: first.invoice_no,
 		}
 
 		return Response.json({files, meta})

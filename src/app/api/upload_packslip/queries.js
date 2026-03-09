@@ -1,8 +1,11 @@
 const sqlServer = {
 	insertFileNames: `
+		DECLARE @out TABLE (id INT);
+
 		INSERT INTO [lt_accounting_filemanager].${process.env.MSSQL_SCHEMA}.[tbl_af_file_names]
 		(invoice_no, [file], file_type, route, stamp, po_number,
 		 [vendor], [vendors_id], [received_date], [merge], [hash])
+		OUTPUT INSERTED.id INTO @out (id)
 		VALUES (
 			@invoice_no,
 			@file,
@@ -13,24 +16,35 @@ const sqlServer = {
 			@vendors,
 			@vendors_id,
 			@received_date,
-			@merge,
+			0,
 			@hash
-		)
+		);
+
+		-- SELECT después del INSERT para leer el merge que el trigger actualizó
+		SELECT id, [merge], invoice_no
+		FROM [lt_accounting_filemanager].${process.env.MSSQL_SCHEMA}.[tbl_af_file_names]
+		WHERE id = (SELECT id FROM @out);
 	`,
 
-	findPendingByPono: `
-		SELECT id, route, [file], file_type, invoice_no, vendors_id
+	getFilesToMoveAfterMerge: `
+		SELECT id, route, file_type
 		FROM [lt_accounting_filemanager].${process.env.MSSQL_SCHEMA}.[tbl_af_file_names]
-		WHERE po_number  = @po_number
+		WHERE invoice_no = @invoice_no
 		  AND vendors_id = @vendors_id
 		  AND file_type  IN ('invoice', 'other')
-		  AND [merge]      = 0
+		  AND id         != @inserted_id
 	`,
 
-	updateMergedRoute: `
+	updateRoute: `
+		UPDATE [lt_accounting_filemanager].${process.env.MSSQL_SCHEMA}.[tbl_af_file_names]
+		SET route = @route
+		WHERE id = @id
+	`,
+
+	updatePackslipRoute: `
 		UPDATE [lt_accounting_filemanager].${process.env.MSSQL_SCHEMA}.[tbl_af_file_names]
 		SET route = @route,
-		    [merge] = 1
+		    hash  = @hash
 		WHERE id = @id
 	`,
 }

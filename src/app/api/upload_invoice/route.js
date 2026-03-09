@@ -64,10 +64,6 @@ export async function POST(req) {
 				parseNullable(formData.get(key.replace('[file]', '[slotKey]'))) ?? 'other'
 			const fileType = slotKey
 
-			// const match = /^([a-z]+)_/.exec(value.name)
-			// const fileType = match?.[1] ?? 'other'
-			//console.log('company', String(company))
-
 			const saveResult = await saveFile(value, {
 				poNumber: body.po_number,
 				company,
